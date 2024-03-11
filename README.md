@@ -1,6 +1,6 @@
 # Play With Rocks
 
-
+Simply upload your image, draw outlines around the rocks, and download the coordinates.
 
 ## Running the Project
 
