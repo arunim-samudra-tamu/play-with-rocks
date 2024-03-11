@@ -24,6 +24,12 @@ const DrawingCanvas: React.ForwardRefRenderFunction<unknown, DrawingCanvasProps>
     ctx.lineWidth = brushSize;
     ctx.strokeStyle = brushColor;
 
+    // Get the parent container dimensions
+    const parentContainer = canvas.parentElement;
+    if (!parentContainer) return;
+    const parentWidth = parentContainer.offsetWidth;
+    const parentHeight = parentContainer.offsetHeight;
+
     //Set canvas image and length
     canvas.width = image.width;
     canvas.height = image.height;
@@ -31,6 +37,35 @@ const DrawingCanvas: React.ForwardRefRenderFunction<unknown, DrawingCanvasProps>
     // Load image onto canvas
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
   }, [image]);
+
+  // Handle window resize event to dynamically adjust canvas size
+useEffect(() => {
+  const handleResize = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Get the parent container dimensions on window resize
+      const parentContainer = canvas.parentElement;
+      if (!parentContainer) return;
+      const parentWidth = parentContainer.offsetWidth;
+      const parentHeight = parentContainer.offsetHeight;
+
+      // Resize canvas to fit the parent container on window resize
+      canvas.width = parentWidth;
+      canvas.height = parentHeight;
+
+      // Redraw the image onto the resized canvas
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+  };
+
+  window.addEventListener('resize', handleResize);
+  return () => {
+      window.removeEventListener('resize', handleResize);
+  };
+}, [image]);
 
   useImperativeHandle(ref, () => ({
     clearCanvas: () => {
